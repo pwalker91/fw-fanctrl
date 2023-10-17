@@ -88,6 +88,16 @@
                 { "temp": 40, "speed": 50 },
                 { "temp": 65, "speed": 100 }
             ]
+        },
+        "full": {
+            "fanSpeedUpdateFrequency": 5,
+            "movingAverageInterval": 40,
+            "speedCurve": [
+                { "temp": 0, "speed": 40 },
+                { "temp": 15, "speed": 70 },
+                { "temp": 40, "speed": 100 }
+            ]
         }
+
     }
 }
