@@ -2,7 +2,7 @@
 
 This is a simple Python service for Linux that drives the Framework Laptop's fan speed according to a configurable speed/temp curve.
 Its default configuration targets very silent fan operation, but it's easy to configure it for a different comfort/performance trade-off.
-Its possible to specify two separate fan curves depending on whether the Laptop is charging/discharging.
+It is possible to specify two separate fan curves depending on whether the Laptop is charging/discharging.
 Under the hood, it uses [fw-ectool](https://github.com/DHowett/fw-ectool) to change parameters in FrameWork's embedded controller (EC).
 
 # Install
@@ -28,7 +28,7 @@ It will copy `fanctrl.py` (to an executable file `fw-fanctrl`) and `./bin/ectool
 # Update
 
 To install an update, you can just pull the latest commit on the `main` branch of this repository, and run the install script again.
-It will overwrite the config file, so you might want to back it up if you have a custom one !
+It will overwrite the config file, so you might want to back it up if you have a custom one!
 
 # Uninstall
 ```
@@ -56,7 +56,7 @@ Strategies can be configured with the following parameters:
 
 - **FanSpeedUpdateFrequency**:
 
-    Time interval between every update to the fan's speed. `fw-fanctrl` measures temperature every second and add it to its moving average, but the actual update to fan speed is made every 5s by default. This is for comfort, otherwise the speed is changed too often and it is noticeable and annoying, especially at low speed.
+    Time interval between every update to the fan's speed. `fw-fanctrl` measures temperature every second and add it to its moving average, but the actual update to fan speed is made every 5s by default. This is for comfort, otherwise, the speed is changed too often and it is noticeable and annoying, especially at low speed.
     For a more reactive fan, you can lower this setting.
 
 - **MovingAverageInterval**:
@@ -65,15 +65,15 @@ Strategies can be configured with the following parameters:
 
 ## Charging/Discharging strategies
 
-The strategy active by default is the one specified in the `defaultStrategy` entry. Optionally a separate strategy only active during discharge can be defined, using the `strategyOnDischarging` entry. By default no extra strategy for discharging is provided, the default stratgy is active during all times.
+The strategy active by default is the one specified in the `defaultStrategy` entry. Optionally a separate strategy only active during discharge can be defined, using the `strategyOnDischarging` entry. By default no extra strategy for discharging is provided, the default strategy is active at all times.
 The charging status of the battery is fetched from the following file by default:
 `/sys/class/power_supply/BAT1/status`
 The default path can be overwritten by entering a value for `batteryChargingStatusPath` inside the `config.json` file.
 
 # Misc
 
-It is possible to hot swap the current strategy with another one by running the command
+It is possible to hot-swap the current strategy with another one by running the command
 ```
-fw-fanctrl strategyName
+fw-fanctrl {strategyName}
 ```
-where `strategyName is one of the strategies described in the config file.
+where `{strategyName}` is one of the strategies described in the config file.
