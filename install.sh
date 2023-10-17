@@ -12,8 +12,8 @@ SERVICE_NAME="fw-fanctrl"
 
 if [ "$1" = "remove" ]; then
 
-    sudo systemctl stop ${SERVICE_NAME//'.service'/} # remove the extension
-    sudo systemctl disable ${SERVICE_NAME//'.service'/}
+    sudo systemctl stop ${SERVICE_NAME} # remove the extension
+    sudo systemctl disable ${SERVICE_NAME}
     rm /usr/local/bin/fw-fanctrl
     ectool --interface=lpc autofanctrl # restore default fan manager
     rm /usr/local/bin/ectool
@@ -21,6 +21,7 @@ if [ "$1" = "remove" ]; then
     rm /usr/lib/systemd/system-sleep/fw-fanctrl-suspend
 
     echo "fw-fanctrl has been removed successfully from system"
+
 elif [ -z $1 ]; then
 
     pip3 install -r requirements.txt
@@ -30,24 +31,25 @@ elif [ -z $1 ]; then
     chown $(logname):$(logname) /usr/local/bin/fw-fanctrl
     mkdir -p /home/$(logname)/.config/fw-fanctrl
     cp config.json /home/$(logname)/.config/fw-fanctrl/
+    chown -R $(logname):$(logname) /home/$(logname)/.config/fw-fanctrl
 
     # cleaning legacy file
     rm /usr/local/bin/fanctrl.py 2> /dev/null || true
 
 
     # check if service is active
-    IS_ACTIVE=$(sudo systemctl is-active  $SERVICE_NAME)
+    IS_ACTIVE=$(sudo systemctl is-active $SERVICE_NAME)
     if [ "$IS_ACTIVE" == "active" ]; then
         # restart the service
         echo "Service is running"
-        echo "Stoping service"
+        echo "Stopping service"
         sudo systemctl stop $SERVICE_NAME
-        echo "Service stoped"
+        echo "Service stopped"
     fi
 
     # create service file
     echo "Creating service file"
-    sudo cat > /etc/systemd/system/${SERVICE_NAME//'"'/}.service << EOF
+    sudo cat > "/etc/systemd/system/${SERVICE_NAME}.service" << EOF
 [Unit]
 Description=FrameWork Fan Controller
 After=multi-user.target
@@ -62,8 +64,7 @@ EOF
 
     # create suspend hooks
     echo "Creating suspend hooks"
-
-    sudo cat > /lib/systemd/system-sleep/fw-fanctrl-suspend << EOF
+    sudo cat > "/lib/systemd/system-sleep/${SERVICE_NAME}-suspend" << EOF
 #!/bin/sh
 
 case \$1 in
@@ -72,18 +73,18 @@ case \$1 in
 esac
 
 EOF
-        
+
     # make the suspend hook executable
     sudo chmod +x /lib/systemd/system-sleep/fw-fanctrl-suspend
 
     # restart daemon, enable and start service
     echo "Reloading daemon and enabling service"
     sudo systemctl daemon-reload
-    sudo systemctl enable ${SERVICE_NAME//'.service'/} # remove the extension
-    sudo systemctl start ${SERVICE_NAME//'.service'/}
+    sudo systemctl enable ${SERVICE_NAME} # remove the extension
+    sudo systemctl start ${SERVICE_NAME}
     echo "Service Started"
 else
     echo "Unknown command $1"
-    exit
+    exit 1
 fi
 exit 0
